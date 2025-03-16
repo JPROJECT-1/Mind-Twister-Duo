@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ayo mainkan Mind Twister Duo bersama temanmu."
+    />
+    <meta name="keywords" content="Mind, Twister, Duo" />
+    <meta name="author" content="JPW" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Mind Twister Duo" />
+    <meta
+      property="og:description"
+      content="Ayo mainkan Mind Twister Duo bersama temanmu."
+    />
+    <meta property="og:image" content="https://example.com/icon.png" />
+    <meta property="og:url" content="https://example.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="id_ID" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mind Twister Duo" />
+    <meta
+      name="twitter:description"
+      content="Ayo mainkan Mind Twister Duo bersama temanmu."
+    />
+    <meta name="twitter:image" content="https://example.com/icon.png" />
+    <meta name="twitter:site" content="@JPW" />
+
+    <title>Mind Twister Duo</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="con">
+      <div class="header">
+        <h1>Mind Twister Duo</h1>
+      </div>
+      <div class="main">
+        <div class="start" id="startp">
+          <div class="st" id="start">
+            <div class="f">
+              <div class="f2">
+                <img src="icon.png" alt="icon" />
+              </div>
+            </div>
+            <div class="" id="btns1">
+              <button class="btn" onclick="start(1)">Start</button><br />
+              <button class="btn">Setting</button><br />
+              <button class="btn" onclick="exit()">Exit</button><br />
+            </div>
+            <div class="n" id="btns2">
+              <button class="btn" onclick="start(2)">Host</button><br />
+              <button class="btn" onclick="start(3)">Client</button><br /><br />
+              <button class="btn" onclick="start(4)">Back</button><br />
+            </div>
+          </div>
+          <div class="st n" id="client">
+            <div id="btnlist"></div>
+            <br /><br />
+            <button class="btn" onclick="start(1)">Back</button><br />
+          </div>
+          <div class="st n" id="host">
+            <h1 class="nroom" id="nroom"></h1>
+            <button class="btn n" id="stroom" onclick="hoststart()">
+              Start</button
+            ><br /><br />
+            <button class="btn" onclick="start(1)">Back</button><br />
+          </div>
+          <div class="st n" id="loading">
+            <h1 class="nroom" id="nroom1"></h1>
+          </div>
+        </div>
+        <div class="game n" id="game">
+          <div class="f3">
+            <div class="question n" id="question">Loading...</div>
+            <div class="answers n" id="answers">Loading...</div>
+          </div>
+        </div>
+        <div class="dones n" id="dones">
+          <h1 class="nroom" id="nroomd"></h1>
+          <br />
+          <p class="droom" id="correct-droom"></p>
+          <br />
+          <p class="droom" id="duration-droom"></p>
+          <br />
+          <p class="droom" id="player-droom"></p>
+          <br />
+        </div>
+      </div>
+
+      <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+      <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyAhiqnldwshTc_sLzG3-asEFXZqysm9VbI",
+          authDomain: "mind-twister-duo.firebaseapp.com",
+          databaseURL: "https://mind-twister-duo-default-rtdb.firebaseio.com",
+          projectId: "mind-twister-duo",
+          storageBucket: "mind-twister-duo.appspot.com",
+          messagingSenderId: "698168714978",
+          appId: "1:698168714978:web:e344ae187dcbfefadfe0bb",
+          measurementId: "G-2SFQXD21SE",
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Data Room
+        let roomData;
+
+        // Fungsi untuk menyimpan data room dengan key tetap
+        function addRoom(roomName, data) {
+          const roomRef = db.ref("rooms/" + roomName); // Simpan dengan nama room sebagai key
+          roomRef
+            .set(data)
+            .then(() => {
+              // console.log(`Room ${roomName} berhasil disimpan!`);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+        function updateRoom(roomName, data) {
+          const roomRef = db.ref("rooms/" + roomName);
+          roomRef
+            .update(data)
+            .then(() => {
+              // console.log(`Room ${roomName} berhasil diperbarui!`);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+        // Fungsi untuk menghapus data room berdasarkan roomName
+        function deleteRoom(roomName) {
+          const roomRef = db.ref("rooms/" + roomName);
+          roomRef
+            .remove()
+            .then(() => {
+              console.log(`Room ${roomName} berhasil dihapus!`);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+        let roomfb;
+        function getRoomData(roomName) {
+          let roomRef;
+          if (roomName) {
+            roomRef = db.ref("rooms/" + roomName);
+          } else {
+            roomRef = db.ref("rooms/");
+          }
+
+          roomRef
+            .once("value") // Hanya mengambil data sekali
+            .then((snapshot) => {
+              if (snapshot.exists()) {
+                // console.log("Data room:", snapshot.val());
+                roomfb = snapshot.val();
+              } else {
+                // console.log("Room tidak ditemukan!");
+                roomfb = [];
+              }
+            })
+            .catch((error) => {
+              console.error("Error mendapatkan data:", error);
+              roomfb = [];
+            });
+        }
+        getRoomData();
+
+        function cdt(r) {
+          const dbRef = firebase.database().ref("rooms/" + r);
+          dbRef.once("value", (snapshot) => {
+            if (!snapshot.exists()) {
+              window.close();
+            }
+          });
+        }
+      </script>
+
+      <script src="data.js"></script>
+      <script src="script.js"></script>
+    </div>
+  </body>
+</html>
