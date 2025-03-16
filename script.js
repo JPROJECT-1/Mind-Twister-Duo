@@ -37,6 +37,21 @@ function start(num) {
     clientf();
     client.classList.remove("n");
   } else if (num === 4) {
+    let nr;
+    if (jr) nr = jr;
+    if (myroom) nr = myroom;
+
+    if (nr) {
+      const url =
+        "https://mind-twister-duo-default-rtdb.firebaseio.com/rooms/" +
+        nr +
+        ".json";
+
+      fetch(url, {
+        method: "DELETE",
+        keepalive: true, // Pastikan request tetap berjalan meskipun halaman ditutup
+      });
+    }
     start.classList.remove("n");
     btns1.classList.remove("n");
     myrole = "";
