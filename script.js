@@ -129,49 +129,57 @@ function hoststart() {
   });
 }
 
-let datapick;
-let datapickm;
+// Fungsi untuk mendapatkan angka acak yang tidak duplikat
 function getRandomNumber(type, usedNumbers) {
-  let max = type === "extreme" ? 19 : 30;
+  let max = data[type]?.length || 0;
+  if (max === 0) return null; // Jika tidak ada soal, kembalikan null
+
   let num;
-
   do {
-    num = Math.floor(Math.random() * max) + 1;
-  } while (usedNumbers.has(num)); // Cek apakah angka sudah digunakan
+    num = Math.floor(Math.random() * max);
+  } while (usedNumbers.has(num));
 
-  usedNumbers.add(num); // Tandai angka sebagai digunakan
+  usedNumbers.add(num);
   return num;
 }
 
+// Fungsi untuk memilih pertanyaan secara acak
 function generateDataPick(count) {
   const types = ["easy", "medium", "hard", "extreme"];
   let datapick = [];
-  let usedNumbers = new Set(); // Simpan angka yang sudah digunakan
+  let usedNumbers = new Set();
 
   for (let i = 0; i < count; i++) {
-    let type = types[Math.floor(Math.random() * types.length)]; // Pilih tipe secara acak
+    let type = types[Math.floor(Math.random() * types.length)];
     let num = getRandomNumber(type, usedNumbers);
-    datapick.push({ type, num });
+
+    if (num !== null) {
+      // Pastikan num valid
+      datapick.push({ type, num });
+    }
   }
 
-  datapickm = datapick;
-  generateDataPicks(datapick);
+  return datapick;
 }
 
+// Fungsi untuk mengambil soal berdasarkan hasil dari generateDataPick
 function generateDataPicks(datas) {
   let datapicks = [];
 
   for (let i = 0; i < datas.length; i++) {
-    let dt;
-    if (datas[i].type === "easy") dt = data.easy[datas[i].num];
-    else if (datas[i].type === "medium") dt = data.medium[datas[i].num];
-    else if (datas[i].type === "hard") dt = data.hard[datas[i].num];
-    else if (datas[i].type === "extreme") dt = data.extreme[datas[i].num];
-    datapicks.push(dt);
+    let dt = data[datas[i].type]?.[datas[i].num];
+
+    if (dt !== undefined) {
+      datapicks.push(dt);
+    }
   }
 
-  datapick = datapicks;
+  return datapicks;
 }
+
+// Eksekusi
+let datapickm = generateDataPick(10);
+let datapick = generateDataPicks(datapickm);
 
 let currentQuestionIndex = 0;
 let timeLeft = 30;
@@ -270,7 +278,6 @@ function runFunctionIfNew(fnString, kode2) {
 
 function awake() {
   generateRandomID();
-  generateDataPick(10);
 }
 awake();
 
