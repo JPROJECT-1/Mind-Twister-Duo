@@ -307,6 +307,7 @@ setInterval(() => {
     let nr;
     if (jr) nr = jr;
     if (myroom) nr = myroom;
+    cdt(nr);
     Object.entries(roomfb).forEach(([key, value]) => {
       if (nr === value.name) {
         if (myroom) {
@@ -364,7 +365,6 @@ setInterval(() => {
         }
       }
     });
-    cdt(nr);
   }
   getRoomData();
 }, 500);

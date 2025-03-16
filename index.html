@@ -127,6 +127,8 @@
 
         // Fungsi untuk menyimpan data room dengan key tetap
         function addRoom(roomName, data) {
+          console.log("Data sebelum dikirim ke Firebase:", data);
+
           const roomRef = db.ref("rooms/" + roomName); // Simpan dengan nama room sebagai key
           roomRef
             .set(data)
