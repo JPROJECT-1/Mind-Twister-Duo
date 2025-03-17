@@ -26,17 +26,6 @@ function start(num) {
   host.classList.add("n");
   client.classList.add("n");
   if (num === 1) {
-    start.classList.remove("n");
-    btns2.classList.remove("n");
-    myrole = "";
-    myroom = "";
-  } else if (num === 2) {
-    hostf();
-    host.classList.remove("n");
-  } else if (num === 3) {
-    clientf();
-    client.classList.remove("n");
-  } else if (num === 4) {
     let nr;
     if (jr) nr = jr;
     if (myroom) nr = myroom;
@@ -52,6 +41,17 @@ function start(num) {
         keepalive: true, // Pastikan request tetap berjalan meskipun halaman ditutup
       });
     }
+    start.classList.remove("n");
+    btns2.classList.remove("n");
+    myrole = "";
+    myroom = "";
+  } else if (num === 2) {
+    hostf();
+    host.classList.remove("n");
+  } else if (num === 3) {
+    clientf();
+    client.classList.remove("n");
+  } else if (num === 4) {
     start.classList.remove("n");
     btns1.classList.remove("n");
     myrole = "";
