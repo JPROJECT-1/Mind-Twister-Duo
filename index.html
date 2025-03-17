@@ -162,7 +162,7 @@
               console.error("Error:", error);
             });
         }
-        let roomfb = getRoomData();
+        let roomfb;
         function getRoomData(roomName) {
           let roomRef;
           if (roomName) {
@@ -175,18 +175,19 @@
             .once("value") // Hanya mengambil data sekali
             .then((snapshot) => {
               if (snapshot.exists()) {
-                console.log("Data room:", snapshot.val());
-                return snapshot.val();
+                // console.log("Data room:", snapshot.val());
+                roomfb = snapshot.val();
               } else {
-                console.log("Room tidak ditemukan!");
-                return [];
+                // console.log("Room tidak ditemukan!");
+                roomfb = [];
               }
             })
             .catch((error) => {
               console.error("Error mendapatkan data:", error);
-              return [];
+              roomfb = [];
             });
         }
+        getRoomData();
 
         function cdt(r) {
           const dbRef = firebase.database().ref("rooms/" + r);
