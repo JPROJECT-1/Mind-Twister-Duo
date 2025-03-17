@@ -373,5 +373,7 @@ setInterval(() => {
       }
     });
   }
-  getRoomData();
+  roomfb = getRoomData();
 }, 500);
+
+console.log("Version: 1.1");
